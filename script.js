@@ -48,7 +48,7 @@
     });
   }
 
-  // Terminal typing effect for hero h1 (Home page)
+  // Terminal typing effect with blinking cursor at the end
   const hero = document.querySelector('.hero h1');
   if(hero){
     const fullText = hero.textContent;
