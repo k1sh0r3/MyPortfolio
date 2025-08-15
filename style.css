@@ -72,3 +72,11 @@ code{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monosp
 /* Light/dark mode toggle */
 #theme-toggle{ cursor:pointer; border:1px solid var(--border); padding:4px 8px; border-radius:8px; background:var(--chip-dark); color:var(--text-dark); }
 #theme-toggle:hover{ box-shadow:0 0 12px rgba(0,255,138,0.3); }
+
+.hero h1::after {
+  content: '|';
+  display: inline-block;
+  margin-left:2px;
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink { 0%,100% {opacity:1;} 50% {opacity:0;} }

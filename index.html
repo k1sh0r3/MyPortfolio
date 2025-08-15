@@ -1,94 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Home · [Your Name]</title>
-  <meta name="description" content="[Editable] Home — part of [Your Name]'s portfolio." />
-  <meta name="color-scheme" content="dark" />
-  <meta name="theme-color" content="#060807" />
-  <meta property="og:title" content="Home · [Your Name]" />
-  <meta property="og:description" content="[Editable] Home — portfolio site." />
-  <meta property="og:type" content="website" />
-  <link rel="icon" href="favicon.svg">
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="nav" role="banner">
-    <div class="wrap">
-      <div class="brand" aria-label="Brand">
-        <span class="logo" aria-hidden="true"></span><span>[Your Name]</span>
-      </div>
-      <button class="menu-toggle" aria-label="Menu">≡</button>
-      <nav class="menu" aria-label="Primary">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="experience.html">Experience</a>
-        <a href="projects.html">Projects</a>
-        <a href="skills.html">Skills</a>
-        <a href="certifications.html">Certs</a>
-        <a href="education.html">Education</a>
-        <a href="interests.html">Interests</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+<body class="dark">
+<a class="skip-link" href="#main">Skip to content</a>
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand">SIVA KISHORE REDDY ALLU</div>
+    <button class="menu-toggle">☰</button>
+    <div class="menu">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="experience.html">Experience</a>
+      <a href="projects.html">Projects</a>
+      <a href="skills.html">Skills</a>
+      <a href="certifications.html">Certifications</a>
+      <a href="education.html">Education</a>
+      <a href="interests.html">Interests</a>
+      <a href="contact.html">Contact</a>
     </div>
-  </header>
-
-  <main id="main" class="main" role="main">
-    
-<section class="hero">
-  <div class="sub"><span class="kbd">$</span> whoami</div>
-  <h1>[Your Name] — [Your Title]</h1>
-  <p class="sub">[City, Country] · <a class="muted" href="mailto:you@example.com">you@example.com</a></p>
-  <div class="chips" aria-label="Highlights">
-    <span class="chip">Available for: [Full‑time/Contract]</span>
-    <span class="chip">Focus: [e.g., ML + Data Platforms]</span>
-    <span class="chip">Years exp: [X+]</span>
+    <button id="theme-toggle">Toggle Theme</button>
   </div>
+</nav>
+<main id="main" class="main">
+
+<div class="hero">
+  <h1>SIVA KISHORE REDDY ALLU</h1>
+  <p class="sub">Data Engineer | Cincinnati, Ohio</p>
+  <p class="sub">Accomplished Data Engineer with nearly 3 years of experience in data warehousing, Python, SQL, AWS, and ETL.</p>
+</div>
+<section id="summary">
+<h2>Summary</h2>
+<p>Accomplished Data Engineer recognized for optimizing web application performance by 35% and awarded for technical excellence.</p>
 </section>
 
-<section>
-  <h2>Summary</h2>
-  <p>Results‑oriented <strong>[role]</strong> with <strong>[X]+ years</strong> of experience building <strong>[domains/tech]</strong>. Passionate about <strong>[focus areas]</strong> and known for delivering <strong>[impact/results]</strong>. Seeking opportunities to <strong>[what you want next]</strong>.</p>
-  <p class="small muted">Tip: edit this text in <code>index.html</code>.</p>
-</section>
-
-<section>
-  <h2>Featured Projects</h2>
-  <div class="grid cols-3">
-    <article class="card">
-      <h3>Project Alpha</h3>
-      <p class="meta">One‑liner about what it does and who it helps.</p>
-      <div class="chips"><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">Vercel</span></div>
-    </article>
-    <article class="card">
-      <h3>DataViz Dashboard</h3>
-      <p class="meta">KPIs, charts, and alerts for XYZ domain.</p>
-      <div class="chips"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Postgres</span></div>
-    </article>
-    <article class="card">
-      <h3>ML Malware Detector</h3>
-      <p class="meta">Static + behavioral features, ROC‑AUC X.XX on benchmark.</p>
-      <div class="chips"><span class="chip">Scikit‑learn</span><span class="chip">XGBoost</span><span class="chip">Docker</span></div>
-    </article>
-  </div>
-</section>
-
-  </main>
-
-  <footer role="contentinfo">
-    <div class="footer-wrap">
-      <div>© <span id="year"></span> [Your Name]. Terminal‑style theme.</div>
-      <div>
-        <a class="btn" href="https://github.com/yourusername" target="_blank" rel="noopener">↗ GitHub</a>
-        <a class="btn" href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener">↗ LinkedIn</a>
-      </div>
-    </div>
-  </footer>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-  <script src="script.js"></script>
+</main>
+<footer>
+<div class="footer-wrap">
+<span>© 2025 Siva Kishore Reddy Allu</span>
+<span><a class="btn" href="https://github.com/sivakishorereddyallu" target="_blank">GitHub</a>
+<a class="btn" href="https://www.linkedin.com/in/sivakishorereddyallu/" target="_blank">LinkedIn</a>
+<a class="btn" href="resume.pdf" target="_blank">Resume</a>
+<button id="copy-email" class="btn" data-email="sivakishorereddyallu@gmail.com">Copy Email</button>
+</span>
+</div>
+</footer>
+<script src="script.js"></script>
 </body>
 </html>
