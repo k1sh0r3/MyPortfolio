@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skills · [Your Name]</title>
+  <meta name="description" content="[Editable] Skills — part of [Your Name]'s portfolio." />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#060807" />
+  <meta property="og:title" content="Skills · [Your Name]" />
+  <meta property="og:description" content="[Editable] Skills — portfolio site." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="nav" role="banner">
+    <div class="wrap">
+      <div class="brand" aria-label="Brand">
+        <span class="logo" aria-hidden="true"></span><span>[Your Name]</span>
+      </div>
+      <button class="menu-toggle" aria-label="Menu">≡</button>
+      <nav class="menu" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="experience.html">Experience</a>
+        <a href="projects.html">Projects</a>
+        <a href="skills.html">Skills</a>
+        <a href="certifications.html">Certs</a>
+        <a href="education.html">Education</a>
+        <a href="interests.html">Interests</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="main" role="main">
+    
+<section class="hero">
+  <div class="sub"><span class="kbd">$</span> cat skills.md</div>
+  <h1>Skills</h1>
+</section>
+
+<section class="grid cols-2">
+  <div class="card">
+    <h3>Languages & Frameworks</h3>
+    <div class="chips">
+      <span class="chip">Python</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span>
+      <span class="chip">React</span><span class="chip">Node.js</span><span class="chip">FastAPI</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Data & Cloud</h3>
+    <div class="chips">
+      <span class="chip">AWS</span><span class="chip">SageMaker</span><span class="chip">Docker</span>
+      <span class="chip">PostgreSQL</span><span class="chip">Airflow</span><span class="chip">Terraform</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Testing & Ops</h3>
+    <div class="chips">
+      <span class="chip">PyTest</span><span class="chip">GitHub Actions</span><span class="chip">Grafana</span>
+      <span class="chip">Prometheus</span><span class="chip">Kubernetes</span>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="footer-wrap">
+      <div>© <span id="year"></span> [Your Name]. Terminal‑style theme.</div>
+      <div>
+        <a class="btn" href="https://github.com/yourusername" target="_blank" rel="noopener">↗ GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener">↗ LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
