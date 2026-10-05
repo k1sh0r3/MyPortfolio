@@ -115,12 +115,17 @@
       reply: "Project Engineer at <b>Wipro Ltd</b> (Jan 2020–Feb 2023): built a Python XML-processing framework, AWS Glue + PySpark ETL pipelines with delta loads, and Tableau dashboards — about a 30% query-performance gain.",
       followups: ['What are his skills?', 'Where did he study?'] },
     { id: 'projects', keys: ['project', 'built', 'portfolio', 'side project', 'apps'],
-      reply: "Seven recent builds, all live: <b>JailbreakGym</b> (adversarial testing for prompts), <b>SQLSentinel</b> (reviewer for AI-written SQL), <b>BlastRadius</b> (column-level data lineage), <b>PreSQL</b> (SQL-safety MCP server), <b>HireRadar</b> (visa-friendly job board), <b>SeevForge</b> (AI resume builder), <b>CtrlZAPI</b> (daily API-schema archive). See the " + LINK.projects + " for case studies.",
-      followups: ['Tell me about JailbreakGym', 'Tell me about SQLSentinel', 'Which one uses AI?'],
+      reply: "Eight recent builds, all live: <b>PrepAgent</b> (interview-prep agent), <b>JailbreakGym</b> (adversarial testing for prompts), <b>SQLSentinel</b> (reviewer for AI-written SQL), <b>BlastRadius</b> (column-level data lineage), <b>PreSQL</b> (SQL-safety MCP server), <b>HireRadar</b> (visa-friendly job board), <b>SeevForge</b> (AI resume builder), <b>CtrlZAPI</b> (daily API-schema archive). See the " + LINK.projects + " for case studies.",
+      followups: ['Tell me about PrepAgent', 'Tell me about JailbreakGym', 'Which one uses AI?'],
       actions: [{ label: 'View all projects', href: 'projects.html' }] },
     { id: 'ai-projects', keys: ['which one uses ai', 'which uses ai', 'ai project', 'ai projects', 'uses ai', 'machine learning project'],
-      reply: "Several! <b>SQLSentinel</b> and <b>PreSQL</b> guard AI-written SQL, <b>SeevForge</b> uses LLMs to polish resumes, and <b>JailbreakGym</b> stress-tests the system prompts behind AI apps.",
-      followups: ['Tell me about JailbreakGym', 'Tell me about SQLSentinel'] },
+      reply: "Several! <b>PrepAgent</b> runs AI mock interviews, <b>SQLSentinel</b> and <b>PreSQL</b> guard AI-written SQL, <b>SeevForge</b> uses LLMs to polish resumes, and <b>JailbreakGym</b> stress-tests the system prompts behind AI apps.",
+      followups: ['Tell me about PrepAgent', 'Tell me about JailbreakGym'] },
+    { id: 'prepagents', keys: ['prepagents', 'prepagent', 'prep agent', 'interview prep', 'mock interview', 'interview practice'],
+      reply: "<b>PrepAgent</b> — interview prep that fights back. A browser-based agent that researches the company, generates resume-grounded questions across behavioral, ML fundamentals, system design, and evals, then runs mock interviews with an explainable heuristic judge, pressure timer, and weak-area tracking across sessions. 80/80 tests green, works with zero API keys.",
+      actions: [{ label: 'Live site', href: 'https://k1sh0r3.github.io/PrepAgent/' }, { label: 'GitHub', href: 'https://github.com/k1sh0r3/PrepAgent' }],
+      followups: ['Tell me more', 'Show his projects', 'How do I contact him?'],
+      more: "The loop: resume + JD + company go in, Wikipedia research comes out, then a 52-question bank drives the mock interview — STAR detection, filler-word counting, and terminology overlap score every answer 1-10 with per-dimension feedback. Bring your own key and an LLM judge scores you side-by-side with the heuristic one." },
     { id: 'jailbreakgym', keys: ['jailbreak', 'jailbreakgym', 'jailbreak gym', 'prompt injection', 'red team', 'redteam', 'adversarial'],
       reply: "<b>JailbreakGym</b> — sparring for system prompts. Paste a system prompt and stress-test it against 500+ prompt-injection and jailbreak attacks, with per-category robustness scores, full transcripts, and auto-hardening suggestions. Free, runs entirely in your browser.",
       actions: [{ label: 'Live site', href: 'https://k1sh0r3.github.io/JailbreakGym/' }, { label: 'GitHub', href: 'https://github.com/k1sh0r3/JailbreakGym' }],
@@ -432,6 +437,13 @@
 
   /* ============ 4. Project case-study modals ============ */
   var CASES = {
+    prepagents: {
+      title: 'PrepAgent',
+      problem: 'Generic interview prep asks generic questions — nothing about your resume, your projects, or the company you are actually interviewing with, and feedback is a black-box score.',
+      approach: 'A browser-based interview-prep agent: resume + JD + company go in, Wikipedia research comes out, then a 52-question bank (behavioral, ML fundamentals, system design, evals) drives mock interviews. An explainable heuristic judge scores every answer 1-10 on STAR structure, length, terminology, and filler words — with follow-ups when you stumble and weak-area tracking across sessions. BYOK unlocks resume-specific questions and a side-by-side LLM judge.',
+      result: 'Live with 80/80 tests green and a one-click sample session — full mock interviews with zero API keys, private by design since everything runs in the browser.',
+      links: [['Live site', 'https://k1sh0r3.github.io/PrepAgent/'], ['GitHub', 'https://github.com/k1sh0r3/PrepAgent']]
+    },
     jailbreakgym: {
       title: 'JailbreakGym',
       problem: 'System prompts are the new attack surface — prompt injection and jailbreaks can make an LLM ignore its instructions, leak data, or misbehave, and most prompt authors never test for it.',
