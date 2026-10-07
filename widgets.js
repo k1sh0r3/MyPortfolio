@@ -115,12 +115,22 @@
       reply: "Project Engineer at <b>Wipro Ltd</b> (Jan 2020–Feb 2023): built a Python XML-processing framework, AWS Glue + PySpark ETL pipelines with delta loads, and Tableau dashboards — about a 30% query-performance gain.",
       followups: ['What are his skills?', 'Where did he study?'] },
     { id: 'projects', keys: ['project', 'built', 'portfolio', 'side project', 'apps'],
-      reply: "Eight recent builds, all live: <b>PrepAgent</b> (interview-prep agent), <b>JailbreakGym</b> (adversarial testing for prompts), <b>SQLSentinel</b> (reviewer for AI-written SQL), <b>BlastRadius</b> (column-level data lineage), <b>PreSQL</b> (SQL-safety MCP server), <b>HireRadar</b> (visa-friendly job board), <b>SeevForge</b> (AI resume builder), <b>CtrlZAPI</b> (daily API-schema archive). See the " + LINK.projects + " for case studies.",
-      followups: ['Tell me about PrepAgent', 'Tell me about JailbreakGym', 'Which one uses AI?'],
+      reply: "Ten recent builds, all live: <b>RAGJudge</b> (RAG eval harness), <b>VaultChat</b> (private in-browser RAG), <b>PrepAgent</b> (interview-prep agent), <b>JailbreakGym</b> (adversarial testing for prompts), <b>SQLSentinel</b> (reviewer for AI-written SQL), <b>BlastRadius</b> (column-level data lineage), <b>PreSQL</b> (SQL-safety MCP server), <b>HireRadar</b> (visa-friendly job board), <b>SeevForge</b> (AI resume builder), <b>CtrlZAPI</b> (daily API-schema archive). See the " + LINK.projects + " for case studies.",
+      followups: ['Tell me about RAGJudge', 'Tell me about VaultChat', 'Which one uses AI?'],
       actions: [{ label: 'View all projects', href: 'projects.html' }] },
     { id: 'ai-projects', keys: ['which one uses ai', 'which uses ai', 'ai project', 'ai projects', 'uses ai', 'machine learning project'],
-      reply: "Several! <b>PrepAgent</b> runs AI mock interviews, <b>SQLSentinel</b> and <b>PreSQL</b> guard AI-written SQL, <b>SeevForge</b> uses LLMs to polish resumes, and <b>JailbreakGym</b> stress-tests the system prompts behind AI apps.",
-      followups: ['Tell me about PrepAgent', 'Tell me about JailbreakGym'] },
+      reply: "Several! <b>RAGJudge</b> evaluates RAG pipelines, <b>VaultChat</b> is private in-browser RAG, <b>PrepAgent</b> runs AI mock interviews, <b>SQLSentinel</b> and <b>PreSQL</b> guard AI-written SQL, <b>SeevForge</b> uses LLMs to polish resumes, and <b>JailbreakGym</b> stress-tests the system prompts behind AI apps.",
+      followups: ['Tell me about RAGJudge', 'Tell me about VaultChat'] },
+    { id: 'ragjudge', keys: ['ragjudge', 'rag judge', 'rag eval', 'eval harness', 'faithfulness'],
+      reply: "<b>RAGJudge</b> — prove your RAG works. A free in-browser eval harness that scores RAG configurations on faithfulness, citation precision/recall, and answer relevance, then ranks them on a sortable leaderboard with per-question drill-downs. Runs fully keyless; bring your own key for an LLM-as-judge scored side-by-side. 73/73 tests green.",
+      actions: [{ label: 'Live site', href: 'https://k1sh0r3.github.io/RAGJudge/' }, { label: 'GitHub', href: 'https://github.com/k1sh0r3/RAGJudge' }],
+      followups: ['Tell me more', 'Show his projects', 'How do I contact him?'],
+      more: "You define a matrix — chunk size, overlap, top-k, retrieval mode — and it runs every contestant over your test questions, scoring each answer's claims against the retrieved context with per-claim verdicts. It's the same 'how do you know it works' question AI interviewers ask, turned into a tool." },
+    { id: 'vaultchat', keys: ['vaultchat', 'vault chat', 'private rag', 'in-browser rag'],
+      reply: "<b>VaultChat</b> — your documents, interrogated privately. A 100% in-browser RAG app: drop in PDFs and chat with them — parsing, chunking, embeddings, and retrieval all run on your device, nothing ever leaves the browser. With a key you get abstractive answers with citations; without one, extractive passages with highlighted terms. 54/54 tests green.",
+      actions: [{ label: 'Live site', href: 'https://k1sh0r3.github.io/VaultChat/' }, { label: 'GitHub', href: 'https://github.com/k1sh0r3/VaultChat' }],
+      followups: ['Tell me more', 'Show his projects', 'How do I contact him?'],
+      more: "Embeddings run via a small transformer model downloaded once and cached in the browser; if it can't load, the app says so honestly and falls back to keyword search instead of faking it. Documents persist in IndexedDB and a wipe-everything button clears docs, embeddings, keys, and transcripts." },
     { id: 'prepagents', keys: ['prepagents', 'prepagent', 'prep agent', 'interview prep', 'mock interview', 'interview practice'],
       reply: "<b>PrepAgent</b> — interview prep that fights back. A browser-based agent that researches the company, generates resume-grounded questions across behavioral, ML fundamentals, system design, and evals, then runs mock interviews with an explainable heuristic judge, pressure timer, and weak-area tracking across sessions. 80/80 tests green, works with zero API keys.",
       actions: [{ label: 'Live site', href: 'https://k1sh0r3.github.io/PrepAgent/' }, { label: 'GitHub', href: 'https://github.com/k1sh0r3/PrepAgent' }],
@@ -437,6 +447,20 @@
 
   /* ============ 4. Project case-study modals ============ */
   var CASES = {
+    ragjudge: {
+      title: 'RAGJudge',
+      problem: 'Teams ship RAG pipelines on vibes — nobody can say whether chunk size 512 beats 1024, or whether the answers are actually grounded in the retrieved context.',
+      approach: 'A free in-browser eval harness: define a matrix of chunk sizes, overlaps, top-k, and retrieval modes, and it scores every contestant on faithfulness (per-claim verdicts against retrieved context), citation precision/recall, and answer relevance — ranked on a sortable leaderboard with per-question drill-downs and canvas charts. Fully keyless via extractive answers and heuristic scorers; BYOK adds LLM answers and an LLM-as-judge shown side-by-side.',
+      result: 'Live with 73/73 tests green — the "how do you know your RAG works" question, answered with a tool instead of hand-waving.',
+      links: [['Live site', 'https://k1sh0r3.github.io/RAGJudge/'], ['GitHub', 'https://github.com/k1sh0r3/RAGJudge']]
+    },
+    vaultchat: {
+      title: 'VaultChat',
+      problem: 'Chatting with your documents usually means uploading them to someone else\'s server — a non-starter for anything sensitive.',
+      approach: 'A 100% in-browser RAG app: PDFs are parsed, chunked, and embedded on-device with a small transformer model, stored in IndexedDB, and retrieved with cosine top-k search. With a BYOK key you get abstractive answers with inline citations; without one, extractive passages with highlighted terms — and if embeddings can\'t load, the app says so and falls back to keyword search instead of faking it.',
+      result: 'Live with 54/54 tests green — private document chat with zero backend, zero uploads, and a wipe-everything button.',
+      links: [['Live site', 'https://k1sh0r3.github.io/VaultChat/'], ['GitHub', 'https://github.com/k1sh0r3/VaultChat']]
+    },
     prepagents: {
       title: 'PrepAgent',
       problem: 'Generic interview prep asks generic questions — nothing about your resume, your projects, or the company you are actually interviewing with, and feedback is a black-box score.',
