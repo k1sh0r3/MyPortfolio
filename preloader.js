@@ -1,6 +1,8 @@
-/* kr-preloader: neural-spiral opening animation for kishore.run
- * Plays once per session on the home page. No text, pure animation.
- * ~2s spiral collapse -> glowing ring pulse -> fade. Click/key skips.
+/* kr-preloader: TIME REWIND opening animation for kishore.run
+ * The finished homepage shows for a beat, then violently rewinds —
+ * sections fly backward into an orange vortex — black pause —
+ * then everything plays forward and cascades back in.
+ * Home page only, once per session. Click/keypress skips.
  * Respects prefers-reduced-motion. Zero dependencies.
  */
 (function () {
@@ -20,163 +22,224 @@
 
   var ACCENT = '255,106,0'; // #ff6a00
   var BG = '#0a0a0c';
-  var SPIRAL_MS = 2000;   // particles collapse
-  var RING_MS = 500;      // ring pulse hold
-  var FADE_MS = 600;      // overlay fade
+  var BEAT_MS = 750;    // real page visible before the rewind hits
+  var REWIND_MS = 1300; // everything flies backward
+  var HOLD_MS = 500;    // black + vortex
+  var PLAY_MS = 1150;   // cascade back in
 
+  /* ---------- overlay + canvas ---------- */
   var style = document.createElement('style');
   style.textContent =
-    '#kr-preloader{position:fixed;inset:0;z-index:99999;background:' + BG + ';' +
-    'cursor:pointer;overflow:hidden;transition:opacity ' + FADE_MS + 'ms ease;}' +
-    '#kr-preloader.kr-done{opacity:0;pointer-events:none;}' +
-    '#kr-preloader canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}';
+    '#kr-rw{position:fixed;inset:0;z-index:99999;cursor:pointer;background:transparent;}' +
+    '#kr-rw canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}' +
+    '#kr-rw .kr-veil{position:absolute;inset:0;background:' + BG + ';opacity:0;transition:opacity 380ms ease;}';
   document.head.appendChild(style);
 
   var overlay = document.createElement('div');
-  overlay.id = 'kr-preloader';
+  overlay.id = 'kr-rw';
   overlay.setAttribute('aria-hidden', 'true');
+  var veil = document.createElement('div');
+  veil.className = 'kr-veil';
   var canvas = document.createElement('canvas');
+  overlay.appendChild(veil);
   overlay.appendChild(canvas);
   document.body.appendChild(overlay);
-
   var ctx = canvas.getContext('2d');
-  var w = 0, h = 0, dpr = 1, cx = 0, cy = 0, maxR = 0, ringR = 0;
 
+  var w = 0, h = 0, cx = 0, cy = 0;
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = window.innerWidth; h = window.innerHeight;
     canvas.width = Math.floor(w * dpr); canvas.height = Math.floor(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cx = w / 2; cy = h / 2;
-    maxR = Math.hypot(w, h) / 2;
-    ringR = Math.max(44, Math.min(90, Math.min(w, h) * 0.085));
   }
   resize();
   window.addEventListener('resize', resize);
 
-  function rand(a, b) { return a + Math.random() * (b - a); }
-  function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  /* ---------- page blocks (top-level body children) ---------- */
+  var blocks = [];
+  Array.prototype.forEach.call(document.body.children, function (el) {
+    if (el === overlay || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+    blocks.push(el);
+  });
 
-  var N = Math.max(220, Math.min(650, Math.floor((w * h) / 2600)));
-  var parts = [];
-  for (var i = 0; i < N; i++) {
-    parts.push({
-      theta: rand(0, Math.PI * 2),
-      r0: rand(maxR * 0.35, maxR * 1.02),
-      spin: rand(0.9, 2.4) * (Math.random() < 0.5 ? 1 : 1), // all swirl same way
-      size: rand(0.7, 2.3),
-      alpha: rand(0.35, 0.95),
-      wob: rand(0, Math.PI * 2)
+  function setBlockTransition(el, delay, dur) {
+    el.style.transition =
+      'transform ' + dur + 'ms cubic-bezier(.7,0,.3,1) ' + delay + 'ms,' +
+      'opacity ' + dur + 'ms ease ' + delay + 'ms,' +
+      'filter ' + dur + 'ms ease ' + delay + 'ms';
+  }
+  function clearBlock(el) {
+    el.style.transition = '';
+    el.style.transform = '';
+    el.style.opacity = '';
+    el.style.filter = '';
+  }
+
+  /* ---------- vortex canvas ---------- */
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  var swirl = [];
+  for (var i = 0; i < 260; i++) {
+    swirl.push({
+      a: rnd(0, Math.PI * 2),
+      r: rnd(60, Math.max(w, h) * 0.55 + 60),
+      sp: rnd(1.2, 3.8),
+      sz: rnd(0.8, 3.2),
+      al: rnd(0.25, 0.85)
+    });
+  }
+  var streaks = [];
+  for (var j = 0; j < 130; j++) {
+    streaks.push({
+      x: rnd(0, w),
+      y: rnd(0, h),
+      len: rnd(40, 170),
+      sp: rnd(500, 1400),
+      al: rnd(0.15, 0.65),
+      wd: rnd(1, 3.5)
     });
   }
 
-  var start = null, finished = false;
+  var mode = 'idle'; // idle | rewind | hold | play
+  var modeT0 = 0;
+  var finished = false;
+  var raf = 0;
 
-  function finish() {
-    if (finished) return;
-    finished = true;
-    overlay.classList.add('kr-done');
-    window.setTimeout(function () {
-      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-      if (style.parentNode) style.parentNode.removeChild(style);
-    }, FADE_MS + 80);
-  }
-  overlay.addEventListener('pointerdown', finish);
-  window.addEventListener('keydown', finish);
-
-  function frame(now) {
-    if (finished) return;
-    if (start === null) start = now;
-    var t = now - start;
+  function drawSwirl(now) {
+    var t = (now - modeT0) / 1000;
+    var intensity = mode === 'rewind' ? Math.min(1, t / 0.9)
+      : mode === 'hold' ? 1
+      : Math.max(0, 1 - t / 0.8);
 
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = BG;
-    ctx.globalAlpha = 0.28; // trail fade -> motion streaks
+    ctx.globalAlpha = mode === 'hold' ? 0.35 : 0.22;
     ctx.fillRect(0, 0, w, h);
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'lighter';
 
-    var p = Math.min(t / SPIRAL_MS, 1);
-    var e = easeInOut(p);
-    var tSec = t / 1000;
-
-    for (var i = 0; i < parts.length; i++) {
-      var pt = parts[i];
-      var th = pt.theta + tSec * pt.spin;
-      var r = pt.r0 * (1 - e) + ringR * e;
-      r += Math.sin(tSec * 3 + pt.wob) * 3 * (1 - e);
-      var x = cx + Math.cos(th) * r;
-      var y = cy + Math.sin(th) * r * 0.92;
-
-      // short trail segment along the swirl direction
-      var thPrev = th - 0.045 * pt.spin;
-      var xPrev = cx + Math.cos(thPrev) * (r + 6 * (1 - e));
-      var yPrev = cy + Math.sin(thPrev) * (r + 6 * (1 - e)) * 0.92;
-
-      var fade = pt.alpha * (1 - e * 0.55);
+    var k, x, y, fade;
+    for (k = 0; k < swirl.length; k++) {
+      var p = swirl[k];
+      var dir = mode === 'play' ? -0.4 : 1;
+      var ang = p.a + t * p.sp * dir;
+      var rr = p.r * (mode === 'rewind' ? Math.max(0.12, 1 - t * 0.55) : 1);
+      x = cx + Math.cos(ang) * rr;
+      y = cy + Math.sin(ang) * rr * 0.9;
+      fade = p.al * intensity;
+      if (fade <= 0.01) continue;
       ctx.strokeStyle = 'rgba(' + ACCENT + ',' + fade.toFixed(3) + ')';
-      ctx.lineWidth = pt.size;
+      ctx.lineWidth = p.sz;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(xPrev, yPrev);
+      var pa = ang - 0.06 * p.sp;
+      ctx.moveTo(cx + Math.cos(pa) * (rr + 14), cy + Math.sin(pa) * (rr + 14) * 0.9);
       ctx.lineTo(x, y);
       ctx.stroke();
+    }
 
-      // sparkle dot on the brighter particles
-      if (pt.alpha > 0.7) {
-        ctx.fillStyle = 'rgba(255,170,80,' + (fade * 0.9).toFixed(3) + ')';
+    // vertical streaks: the page flying backward
+    if ((mode === 'rewind' || mode === 'hold') && intensity > 0.02) {
+      for (k = 0; k < streaks.length; k++) {
+        var s = streaks[k];
+        var span = h + s.len;
+        var y2 = (((s.y - t * s.sp) % span) + span) % span - s.len;
+        var a2 = s.al * intensity * Math.max(0, 1 - (y2 / h) * 0.35);
+        if (a2 <= 0.01) continue;
+        ctx.strokeStyle = 'rgba(' + ACCENT + ',' + a2.toFixed(3) + ')';
+        ctx.lineWidth = s.wd;
         ctx.beginPath();
-        ctx.arc(x, y, pt.size * 0.55, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(s.x, y2);
+        ctx.lineTo(s.x, y2 + s.len);
+        ctx.stroke();
       }
     }
 
-    // glowing ring: fades in during the last stretch, pulses at the end
-    if (p > 0.55) {
-      var rp = (p - 0.55) / 0.45;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(' + ACCENT + ',' + (0.25 + rp * 0.75).toFixed(3) + ')';
-      ctx.lineWidth = 3 + rp * 2;
-      ctx.shadowColor = 'rgba(' + ACCENT + ',0.9)';
-      ctx.shadowBlur = 28;
+    // core glow
+    if (intensity > 0.02) {
+      var R = 120 * intensity + 20;
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+      g.addColorStop(0, 'rgba(' + ACCENT + ',' + (0.5 * intensity).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(' + ACCENT + ',0)');
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    if (p < 1) {
-      requestAnimationFrame(frame);
-    } else {
-      // ring pulse, then fade the whole overlay
-      var pulseStart = null;
-      (function pulse(now2) {
-        if (finished) return;
-        if (pulseStart === null) pulseStart = now2;
-        var q = Math.min((now2 - pulseStart) / RING_MS, 1);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = BG;
-        ctx.globalAlpha = 0.35;
-        ctx.fillRect(0, 0, w, h);
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'lighter';
-        ctx.save();
-        ctx.strokeStyle = 'rgba(' + ACCENT + ',' + (1 - q * 0.6).toFixed(3) + ')';
-        ctx.lineWidth = 5 - q * 2;
-        ctx.shadowColor = 'rgba(' + ACCENT + ',0.9)';
-        ctx.shadowBlur = 30;
-        ctx.beginPath();
-        ctx.arc(cx, cy, ringR * (1 + q * 0.18), 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-        if (q < 1) requestAnimationFrame(pulse);
-        else finish();
-      })(performance.now());
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
-  requestAnimationFrame(frame);
 
-  // safety: never trap the user behind the overlay
-  window.setTimeout(finish, SPIRAL_MS + RING_MS + 2500);
+  function loop(now) {
+    if (mode === 'idle' || finished) return;
+    drawSwirl(now);
+    raf = requestAnimationFrame(loop);
+  }
+
+  /* ---------- phases ---------- */
+  var timers = [];
+  function later(fn, ms) { timers.push(window.setTimeout(fn, ms)); }
+
+  function finish() {
+    if (finished) return;
+    finished = true;
+    for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
+    cancelAnimationFrame(raf);
+    for (var b = 0; b < blocks.length; b++) clearBlock(blocks[b]);
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    if (style.parentNode) style.parentNode.removeChild(style);
+  }
+  overlay.addEventListener('pointerdown', finish);
+  window.addEventListener('keydown', finish);
+
+  function phaseRewind() {
+    if (finished) return;
+    mode = 'rewind'; modeT0 = performance.now();
+    veil.style.opacity = '0';
+    var n = blocks.length;
+    for (var i = 0; i < n; i++) {
+      var el = blocks[i];
+      var rev = n - 1 - i; // bottom sections leave first: time flowing backward
+      var delay = Math.round(rev * (REWIND_MS * 0.45 / Math.max(n - 1, 1)));
+      setBlockTransition(el, delay, Math.round(REWIND_MS * 0.62));
+      void el.offsetWidth; // reflow so the transition triggers
+      el.style.transform = 'translateY(-70px) scale(0.93)';
+      el.style.opacity = '0';
+      el.style.filter = 'blur(5px) saturate(1.6)';
+    }
+    loop(performance.now());
+    later(phaseHold, REWIND_MS);
+  }
+
+  function phaseHold() {
+    if (finished) return;
+    mode = 'hold'; modeT0 = performance.now();
+    veil.style.opacity = '1'; // pure black + vortex
+    later(phasePlay, HOLD_MS);
+  }
+
+  function phasePlay() {
+    if (finished) return;
+    mode = 'play'; modeT0 = performance.now();
+    veil.style.opacity = '0';
+    var n = blocks.length;
+    for (var i = 0; i < n; i++) {
+      (function (el, idx) {
+        var delay = Math.round(idx * (PLAY_MS * 0.5 / Math.max(n - 1, 1)));
+        el.style.transition = 'none';
+        el.style.transform = 'translateY(46px) scale(0.985)';
+        el.style.opacity = '0';
+        el.style.filter = 'blur(3px)';
+        void el.offsetWidth;
+        setBlockTransition(el, delay, Math.round(PLAY_MS * 0.55));
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.opacity = '1';
+        el.style.filter = 'blur(0px)';
+      })(blocks[i], i);
+    }
+    later(finish, PLAY_MS + 200);
+  }
+
+  later(phaseRewind, BEAT_MS); // let the real page show for a beat, then rewind
+  later(finish, BEAT_MS + REWIND_MS + HOLD_MS + PLAY_MS + 3000); // absolute safety
 })();
