@@ -39,12 +39,13 @@
     });
     var n;
     while ((n = walker.nextNode())) {
+      var pel = n.parentElement;
       out.push({
         node: n,
+        el: pel, // captured once: innerHTML rewrites below detach `node`
         text: n.nodeValue,
         chars: n.nodeValue.split(''),
-        hero: !!(n.parentElement && n.parentElement.closest &&
-                 n.parentElement.closest('.hero h1')),
+        hero: !!(pel && pel.closest && pel.closest('.hero h1')),
         done: false,
         start: 0
       });
@@ -60,8 +61,8 @@
   function restoreAll() {
     for (var i = 0; i < items.length; i++) {
       var it = items[i];
-      if (it.hero && it.node.parentElement) {
-        it.node.parentElement.textContent = it.text;
+      if (it.hero && it.el && it.el.isConnected) {
+        it.el.textContent = it.text;
       } else {
         try { it.node.nodeValue = it.text; } catch (e) {}
       }
@@ -77,6 +78,7 @@
   }
 
   function renderHero(it, lockedCount) {
+    if (!it.el || !it.el.isConnected) { it.done = true; return; }
     var html = '';
     for (var c = 0; c < it.chars.length; c++) {
       var ch = it.chars[c];
@@ -87,7 +89,7 @@
         html += '<span style="color:#8a4d1c">' + pick() + '</span>';
       }
     }
-    it.node.parentElement.innerHTML = html;
+    it.el.innerHTML = html;
   }
 
   function frame(now) {
@@ -102,14 +104,14 @@
       var lt = t - it.start;
       if (lt < 0) { allDone = false; continue; }
       if (lt >= NODE_DUR_MS) {
-        if (it.hero && it.node.parentElement) it.node.parentElement.textContent = it.text;
+        if (it.hero && it.el && it.el.isConnected) it.el.textContent = it.text;
         else { try { it.node.nodeValue = it.text; } catch (e) {} }
         it.done = true;
         continue;
       }
       allDone = false;
       var lockedCount = Math.floor((lt / NODE_DUR_MS) * it.chars.length);
-      if (it.hero && it.node.parentElement) {
+      if (it.hero) {
         renderHero(it, lockedCount);
       } else {
         var out = '';
